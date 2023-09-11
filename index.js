@@ -6,8 +6,8 @@ app.use(express.json())
 const connectDB = require("./utils/database")
 const { ItemModel } = require("./utils/schemaModels")
 
-//ITEM functionsだよ
-//Create Itemだよ
+//ITEM functions
+//Create Item
 app.post("/item/create", async(req, res) => {
   try {
   connectDB()
@@ -28,6 +28,7 @@ app.get("/", async(req, res) => {
     return res.status(400).json({message: "アイテムの読み取り失敗（オール）"})
   }
 })
+
 //Read Single Item
 app.get("/item/:id", async(req, res) => {
   try{
@@ -38,13 +39,22 @@ app.get("/item/:id", async(req, res) => {
     return res.status(400).json({message: "アイテム読み取り失敗（シングル）"})
   }
 })
+
 //Update Item
-app.put("/item/update/:id", (req, res) => {
-  return res.status(200).json({message: "アイテム編集成功"})
+app.put("/item/update/:id", async(req, res) => {
+  try{
+    await connectDB()
+    const singleItem = await ItemModel.updateOne({_id: req.params.id}, req.body)
+    return res.status(200).json({message: "アイテム編集成功（シングル）", singleItem: singleItem})
+  }catch(err){
+    return res.status(400).json({message: "アイテム編集失敗"})
+  }
 })
+
 //Delete Item
 
-//USER functionsだよ
+
+//USER functions
 //Register User
 //Login User
 
