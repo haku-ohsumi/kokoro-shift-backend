@@ -29,8 +29,14 @@ app.get("/", async(req, res) => {
   }
 })
 //Read Single Item
-app.get("/item/:id", (req, res) => {
-  return res.status(200).json({message: "アイテム読み取り成功（シングル）"})
+app.get("/item/:id", async(req, res) => {
+  try{
+    await connectDB()
+    const singleItem = await ItemModel.findById(req.params.id)
+    return res.status(200).json({message: "アイテム読み取り成功（シングル）", singleItem: singleItem})
+  }catch(err){
+    return res.status(400).json({message: "アイテム読み取り失敗（シングル）"})
+  }
 })
 //Update Item
 //Delete Item
