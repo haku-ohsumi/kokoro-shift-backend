@@ -29,6 +29,9 @@ app.get("/", async(req, res) => {
   }
 })
 //Read Single Item
+app.get("/item/:id", (req, res) => {
+  return res.status(200).json({message: "アイテム読み取り成功（シングル）"})
+})
 //Update Item
 //Delete Item
 
