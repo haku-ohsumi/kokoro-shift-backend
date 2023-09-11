@@ -39,6 +39,9 @@ app.get("/item/:id", async(req, res) => {
   }
 })
 //Update Item
+app.put("/item/update/:id", (req, res) => {
+  return res.status(200).json({message: "アイテム編集成功"})
+})
 //Delete Item
 
 //USER functionsだよ
