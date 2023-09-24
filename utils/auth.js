@@ -12,7 +12,8 @@ const auth = async(req, res, next) => {
   }
   try {
     const decoded = jwt.verify(token, secret_key)
-    console.log(decoded)
+    req.body.email = decoded.email
+    return next()
   }catch(err){
     return res.status(400).json({message: "トークンが正しくないので、ログインしてください"})
   }

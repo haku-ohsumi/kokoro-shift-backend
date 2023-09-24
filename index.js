@@ -1,10 +1,12 @@
 const express = require("express")
 const app = express()
-const port = 5050;
+const port = process.env.PORT || 5050;
+const cors = require("cors")
+app.use(cors())
 app.use(express.urlencoded({ extended:true }))
 app.use(express.json())
 const jwt = require("jsonwebtoken")
-const auth = require("./utlis/auth")
+const auth = require("./utils/auth")
 const connectDB = require("./utils/database")
 const { ItemModel, UserModel } = require("./utils/schemaModels")
 
@@ -46,8 +48,13 @@ app.get("/item/:id", async(req, res) => {
 app.put("/item/update/:id", auth, async(req, res) => {
   try{
     await connectDB()
-    const singleItem = await ItemModel.updateOne({_id: req.params.id}, req.body)
-    return res.status(200).json({message: "アイテム編集成功（シングル）", singleItem: singleItem})
+    const singleItem = await ItemModel.findById(req.params.id)
+    if (singleItem.email === req.body.email){
+      await ItemModel.updateOne({_id: req.params.id}, req.body)
+      return res.status(200).json({message: "アイテム編集成功（シングル）", singleItem: singleItem})
+    }else{
+      throw new Error()
+    }
   }catch(err){
     return res.status(400).json({message: "アイテム編集失敗"})
   }
@@ -57,8 +64,13 @@ app.put("/item/update/:id", auth, async(req, res) => {
 app.delete("/item/delete/:id", auth, async(req, res) => {
   try{
     await connectDB()
-    await ItemModel.deleteOne({_id: req.params.id})
-    return res.status(200).json({message: "アイテム削除成功"})
+    const singleItem = await ItemModel.findById(req.params.id)
+    if(singleItem.email === req.body.email){
+      await ItemModel.deleteOne({_id: req.params.id})
+      return res.status(200).json({message: "アイテム削除成功"})
+    }else{
+      throw new Error()
+    }
   }catch(err){
     return res.status(400).json({message: "アイテム削除失敗"})
   }
@@ -103,5 +115,5 @@ app.post("/user/login", async(req, res) => {
 })
 
 app.listen(port, () => {
-  console.log (`Listening onLocalhost port ${port}`)
+  console.log (`Listening on localhost port ${port}`)
 })
