@@ -4,12 +4,13 @@ const port = 5050;
 app.use(express.urlencoded({ extended:true }))
 app.use(express.json())
 const jwt = require("jsonwebtoken")
+const auth = require("./utlis/auth")
 const connectDB = require("./utils/database")
 const { ItemModel, UserModel } = require("./utils/schemaModels")
 
 //ITEM functions
 //Create Item
-app.post("/item/create", async(req, res) => {
+app.post("/item/create", auth, async(req, res) => {
   try {
   connectDB()
   await ItemModel.create(req.body)
@@ -42,7 +43,7 @@ app.get("/item/:id", async(req, res) => {
 })
 
 //Update Item
-app.put("/item/update/:id", async(req, res) => {
+app.put("/item/update/:id", auth, async(req, res) => {
   try{
     await connectDB()
     const singleItem = await ItemModel.updateOne({_id: req.params.id}, req.body)
@@ -53,7 +54,7 @@ app.put("/item/update/:id", async(req, res) => {
 })
 
 //Delete Item
-app.delete("/item/delete/:id", async(req, res) => {
+app.delete("/item/delete/:id", auth, async(req, res) => {
   try{
     await connectDB()
     await ItemModel.deleteOne({_id: req.params.id})
