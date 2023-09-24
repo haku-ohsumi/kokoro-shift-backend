@@ -4,7 +4,7 @@ const port = 5050;
 app.use(express.urlencoded({ extended:true }))
 app.use(express.json())
 const connectDB = require("./utils/database")
-const { ItemModel } = require("./utils/schemaModels")
+const { ItemModel, UserModel } = require("./utils/schemaModels")
 
 //ITEM functions
 //Create Item
@@ -64,7 +64,18 @@ app.delete("/item/delete/:id", async(req, res) => {
 
 //USER functions
 //Register User
+app.post("/user/register", async(req, res) => {
+  try{
+    await connectDB()
+    await UserModel.create(req.body)
+    return res.status(200).json({message: "ユーザー登録成功"})
+  }catch(err){
+    return res.status(400).json({message: "ユーザー登録失敗"})
+  }
+})
+
 //Login User
+
 
 app.listen(port, () => {
   console.log (`Listening onLocalhost port ${port}`)
