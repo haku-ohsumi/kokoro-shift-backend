@@ -3,6 +3,7 @@ const app = express()
 const port = 5050;
 app.use(express.urlencoded({ extended:true }))
 app.use(express.json())
+const jwt = require("jsonwebtoken")
 const connectDB = require("./utils/database")
 const { ItemModel, UserModel } = require("./utils/schemaModels")
 
@@ -75,12 +76,23 @@ app.post("/user/register", async(req, res) => {
 })
 
 //Login User
+const secret_key = "mern-market"
+
 app.post("/user/login", async(req, res) => {
   try{
     await connectDB()
     const savedUserData = await UserModel.findOne({email: req.body.email})
     if(savedUserData){
-      return res.status(200).json({message: "ログイン成功"})
+      if(req.body.password === savedUserData.password){
+        const payload = {
+          email: req.body.email,
+        }
+        const token = jwt.sign(payload, secret_key, {expiresIn: "23h"})
+        console.log(token)
+        return res.status(200).json({message: "ログイン成功"})
+      }else{
+        return req.status(400).json({message: "ログイン失敗: パスワードが間違っています"})
+      }
     }else{
       return res.status(400).json({message: "ログイン失敗: ユーザー登録をしてください"})
     }
