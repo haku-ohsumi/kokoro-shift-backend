@@ -75,7 +75,19 @@ app.post("/user/register", async(req, res) => {
 })
 
 //Login User
-
+app.post("/user/login", async(req, res) => {
+  try{
+    await connectDB()
+    const savedUserData = await UserModel.findOne({email: req.body.email})
+    if(savedUserData){
+      return res.status(200).json({message: "ログイン成功"})
+    }else{
+      return res.status(400).json({message: "ログイン失敗: ユーザー登録をしてください"})
+    }
+  }catch(err){
+    return res.status(400).json({message: "ログイン失敗"})
+  }
+})
 
 app.listen(port, () => {
   console.log (`Listening onLocalhost port ${port}`)
