@@ -101,8 +101,7 @@ app.post("/user/login", async(req, res) => {
           email: req.body.email,
         }
         const token = jwt.sign(payload, secret_key, {expiresIn: "23h"})
-        console.log(token)
-        return res.status(200).json({message: "ログイン成功"})
+        return res.status(200).json({message: "ログイン成功", token})
       }else{
         return req.status(400).json({message: "ログイン失敗: パスワードが間違っています"})
       }
