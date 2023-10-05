@@ -127,6 +127,17 @@ app.post("/shift/create/:id", auth, async(req, res) => {
 
 
 //ユーザー
+//管理者登録
+app.post("/user/admin/register", async(req, res) => {
+  try{
+    await connectDB()
+    await UserModel.create(req.body)
+    return res.status(200).json({message: "ユーザー登録成功"})
+  }catch(err){
+    return res.status(400).json({message: "ユーザー登録失敗"})
+  }
+})
+
 //管理者ログイン
 const secret_key = "kokoro-shift"
 
@@ -134,7 +145,7 @@ app.post("/user/admin/login", async(req, res) => {
   try{
     await connectDB()
     const savedUserData = await UserModel.findOne({email: req.body.email})
-    if(savedUserData === 'haku@gmail.com'){
+    if(savedUserData){
       if(req.body.password === savedUserData.password){
         const payload = {
           email: req.body.email,
@@ -145,7 +156,7 @@ app.post("/user/admin/login", async(req, res) => {
         return req.status(400).json({message: "ログイン失敗: パスワードが間違っています"})
       }
     }else{
-      return res.status(400).json({message: "ログイン失敗: ユーザー登録をしてください"})
+      return res.status(400).json({message: "ログイン失敗: 管理者登録をしてください"})
     }
   }catch(err){
     return res.status(400).json({message: "ログイン失敗"})
@@ -153,7 +164,7 @@ app.post("/user/admin/login", async(req, res) => {
 })
 
 //従業員登録
-app.post("/user/employee/register", async(req, res) => {
+app.post("/user/register", async(req, res) => {
   try{
     await connectDB()
     await UserModel.create(req.body)
@@ -164,7 +175,7 @@ app.post("/user/employee/register", async(req, res) => {
 })
 
 //従業員ログイン
-app.post("/user/employee/login", async(req, res) => {
+app.post("/user/login", async(req, res) => {
   try{
     await connectDB()
     const savedUserData = await UserModel.findOne({email: req.body.email})
