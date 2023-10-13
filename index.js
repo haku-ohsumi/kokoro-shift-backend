@@ -8,7 +8,7 @@ app.use(express.json())
 const jwt = require("jsonwebtoken")
 const auth = require("./utils/auth")
 const connectDB = require("./utils/database")
-const { ItemModel, UserModel } = require("./utils/schemaModels")
+const { ItemModel, AdminUserModel } = require("./utils/schemaModels")
 
 //「ココロの状態」
 //「ココロの状態」回答
@@ -131,7 +131,7 @@ app.post("/shift/create/:id", auth, async(req, res) => {
 app.post("/user/admin/register", async(req, res) => {
   try{
     await connectDB()
-    await UserModel.create(req.body)
+    await AdminUserModel.create(req.body)
     return res.status(200).json({message: "ユーザー登録成功"})
   }catch(err){
     return res.status(400).json({message: "ユーザー登録失敗"})
@@ -144,9 +144,9 @@ const secret_key = "kokoro-shift"
 app.post("/user/admin/login", async(req, res) => {
   try{
     await connectDB()
-    const savedUserData = await UserModel.findOne({email: req.body.email})
-    if(savedUserData){
-      if(req.body.password === savedUserData.password){
+    const savedAdminUserData = await AdminUserModel.findOne({email: req.body.email})
+    if(savedAdminUserData){
+      if(req.body.password === savedAdminUserData.password){
         const payload = {
           email: req.body.email,
         }
