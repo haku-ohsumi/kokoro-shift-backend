@@ -150,8 +150,8 @@ app.post("/admin/user/login", async(req, res) => {
         const payload = {
           email: req.body.email,
         }
-        const token = jwt.sign(payload, secret_key, {expiresIn: "23h"})
-        return res.status(200).json({message: "ログイン成功", token})
+        const adminToken = jwt.sign(payload, "admin-token-secret", { expiresIn: "23h" })
+        return res.status(200).json({message: "ログイン成功", adminToken})
       }else{
         return req.status(400).json({message: "ログイン失敗: パスワードが間違っています"})
       }
@@ -174,7 +174,7 @@ app.post("/admin/staff/register", async(req, res) => {
   }
 })
 
-//管理者ログイン
+//スタッフログイン
 // const secret_key = "kokoro-shift"
 
 app.post("/staff/user/login", async(req, res) => {
