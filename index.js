@@ -174,13 +174,15 @@ app.post("/admin/staff/register", async(req, res) => {
   }
 })
 
-//従業員ログイン
-app.post("/user/login", async(req, res) => {
+//管理者ログイン
+// const secret_key = "kokoro-shift"
+
+app.post("/staff/user/login", async(req, res) => {
   try{
     await connectDB()
-    const savedUserData = await UserModel.findOne({email: req.body.email})
-    if(savedUserData){
-      if(req.body.password === savedUserData.password){
+    const savedStaffUserData = await StaffUserModel.findOne({email: req.body.email})
+    if(savedStaffUserData){
+      if(req.body.password === savedStaffUserData.password){
         const payload = {
           email: req.body.email,
         }
@@ -190,7 +192,7 @@ app.post("/user/login", async(req, res) => {
         return req.status(400).json({message: "ログイン失敗: パスワードが間違っています"})
       }
     }else{
-      return res.status(400).json({message: "ログイン失敗: ユーザー登録をしてください"})
+      return res.status(400).json({message: "ログイン失敗: 管理者登録をしてください"})
     }
   }catch(err){
     return res.status(400).json({message: "ログイン失敗"})
