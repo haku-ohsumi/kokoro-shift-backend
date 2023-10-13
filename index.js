@@ -8,7 +8,7 @@ app.use(express.json())
 const jwt = require("jsonwebtoken")
 const auth = require("./utils/auth")
 const connectDB = require("./utils/database")
-const { ItemModel, AdminUserModel } = require("./utils/schemaModels")
+const { ItemModel, AdminUserModel, StaffUserModel } = require("./utils/schemaModels")
 
 //「ココロの状態」
 //「ココロの状態」回答
@@ -163,11 +163,11 @@ app.post("/admin/user/login", async(req, res) => {
   }
 })
 
-//従業員登録
-app.post("/user/register", async(req, res) => {
+//スタッフ登録
+app.post("/admin/staff/register", async(req, res) => {
   try{
     await connectDB()
-    await UserModel.create(req.body)
+    await StaffUserModel.create(req.body)
     return res.status(200).json({message: "ユーザー登録成功"})
   }catch(err){
     return res.status(400).json({message: "ユーザー登録失敗"})
