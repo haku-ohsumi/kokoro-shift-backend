@@ -139,7 +139,7 @@ app.post("/admin/user/register", async(req, res) => {
 })
 
 //管理者ログイン
-const secret_key = "kokoro-shift"
+const admin_secret_key = "admin-secret"
 
 app.post("/admin/user/login", async(req, res) => {
   try{
@@ -150,8 +150,8 @@ app.post("/admin/user/login", async(req, res) => {
         const payload = {
           email: req.body.email,
         }
-        const adminToken = jwt.sign(payload, "admin-token-secret", { expiresIn: "23h" })
-        return res.status(200).json({message: "ログイン成功", adminToken})
+        const adminToken = jwt.sign(payload, admin_secret_key, { expiresIn: "23h" })
+        return res.status(200).json({message: "ログイン成功", adminToken, tokenType: "admin-token"})
       }else{
         return req.status(400).json({message: "ログイン失敗: パスワードが間違っています"})
       }
@@ -175,7 +175,7 @@ app.post("/admin/staff/register", async(req, res) => {
 })
 
 //スタッフログイン
-// const secret_key = "kokoro-shift"
+const staff_secret_key = "staff-secret"
 
 app.post("/staff/user/login", async(req, res) => {
   try{
@@ -186,8 +186,8 @@ app.post("/staff/user/login", async(req, res) => {
         const payload = {
           email: req.body.email,
         }
-        const token = jwt.sign(payload, secret_key, {expiresIn: "23h"})
-        return res.status(200).json({message: "ログイン成功", token})
+        const staffToken = jwt.sign(payload, staff_secret_key, {expiresIn: "23h"})
+        return res.status(200).json({message: "ログイン成功", staffToken, tokenType: "staff-token"})
       }else{
         return req.status(400).json({message: "ログイン失敗: パスワードが間違っています"})
       }
