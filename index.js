@@ -128,7 +128,7 @@ app.post("/shift/create/:id", auth, async(req, res) => {
 
 //ユーザー
 //管理者登録
-app.post("/user/admin/register", async(req, res) => {
+app.post("/admin/user/register", async(req, res) => {
   try{
     await connectDB()
     await AdminUserModel.create(req.body)
@@ -141,7 +141,7 @@ app.post("/user/admin/register", async(req, res) => {
 //管理者ログイン
 const secret_key = "kokoro-shift"
 
-app.post("/user/admin/login", async(req, res) => {
+app.post("/admin/user/login", async(req, res) => {
   try{
     await connectDB()
     const savedAdminUserData = await AdminUserModel.findOne({email: req.body.email})
