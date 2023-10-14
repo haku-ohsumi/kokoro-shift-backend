@@ -15,6 +15,10 @@ const KokoroDataSchema = new mongoose.Schema({
     type: Number, // ココロの状態を表す数値
     required: true,
   },
+  staffId: {
+    type: String, // StaffIDを保存するためのフィールド
+    required: true,
+  },
   date: {
     type: Date, // データを保存した日時
     default: Date.now,

@@ -115,10 +115,16 @@ app.get("/kokoro-shift/:id", async(req, res) => {
 
 
 // ココロの状態を保存
-app.post("/staff/kokoro/state", async (req, res) => {
+app.post("/staff/kokoro/state/:staffId", async (req, res) => {
+
+  const staffId = req.params.staffId;
+
   try {
     // データベースに新しいデータを保存
-    const newKokoroData = new KokoroDataModel(req.body);
+    const newKokoroData = new KokoroDataModel({
+      kokoroState: req.body.kokoroState,
+      staffId: staffId,
+    });
     await newKokoroData.save();
 
     return res.status(200).json({ message: "データが正常に保存されました" });
