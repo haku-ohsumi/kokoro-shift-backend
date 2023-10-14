@@ -8,7 +8,7 @@ app.use(express.json())
 const jwt = require("jsonwebtoken")
 const auth = require("./utils/auth")
 const connectDB = require("./utils/database")
-const { ItemModel, AdminUserModel, StaffUserModel } = require("./utils/schemaModels")
+const { ItemModel, AdminUserModel, StaffUserModel, KokoroDataModel } = require("./utils/schemaModels")
 
 //「ココロの状態」
 //「ココロの状態」回答
@@ -113,16 +113,19 @@ app.get("/kokoro-shift/:id", async(req, res) => {
   }
 })
 
-//ココロシフト
-app.post("/shift/create/:id", auth, async(req, res) => {
+
+// ココロの状態を保存
+app.post("/staff/kokoro/state", async (req, res) => {
   try {
-  connectDB()
-  await ItemModel.create(req.body)
-  return res.status(200).json({message: "アイテム作成成功"})
-  }catch(err){
-    return res.status(400).json({message: "アイテム作成失敗"})
+    // データベースに新しいデータを保存
+    const newKokoroData = new KokoroDataModel(req.body);
+    await newKokoroData.save();
+
+    return res.status(200).json({ message: "データが正常に保存されました" });
+  } catch (error) {
+    return res.status(500).json({ message: "データの保存中にエラーが発生しました" });
   }
-})
+});
 
 
 

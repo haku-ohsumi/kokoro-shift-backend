@@ -10,6 +10,18 @@ const ItemSchema = new Schema({
   email: String
 })
 
+const KokoroDataSchema = new mongoose.Schema({
+  kokoroState: {
+    type: Number, // ココロの状態を表す数値
+    required: true,
+  },
+  date: {
+    type: Date, // データを保存した日時
+    default: Date.now,
+  },
+  // 他にも必要なフィールドがあればここに追加できます
+});
+
 const AdminUserSchema = new Schema({
   name: {
     type: String,
@@ -43,5 +55,6 @@ const StaffUserSchema = new Schema({
 })
 
 exports.ItemModel = mongoose.model("Item", ItemSchema)
+exports.KokoroDataModel = mongoose.model("KokoroData", KokoroDataSchema)
 exports.AdminUserModel = mongoose.model("AdminUser", AdminUserSchema)
 exports.StaffUserModel = mongoose.model("StaffUser", StaffUserSchema)
