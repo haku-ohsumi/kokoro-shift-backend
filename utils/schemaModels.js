@@ -10,6 +10,12 @@ const ItemSchema = new Schema({
   email: String
 })
 
+const WorkTimeSchema = new mongoose.Schema({
+  startTime: String,
+  endTime: String,
+});
+
+
 const KokoroDataSchema = new mongoose.Schema({
   kokoroState: {
     type: Number, // ココロの状態を表す数値
@@ -59,6 +65,7 @@ const StaffUserSchema = new Schema({
 })
 
 exports.ItemModel = mongoose.model("Item", ItemSchema)
+exports.WorkTimeModel = mongoose.model("WorkTime", WorkTimeSchema);
 exports.KokoroDataModel = mongoose.model("KokoroData", KokoroDataSchema)
 exports.AdminUserModel = mongoose.model("AdminUser", AdminUserSchema)
 exports.StaffUserModel = mongoose.model("StaffUser", StaffUserSchema)
