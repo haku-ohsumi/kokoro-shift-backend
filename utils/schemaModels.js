@@ -2,13 +2,6 @@ const mongoose = require ("mongoose")
 
 const Schema = mongoose.Schema
 
-const ItemSchema = new Schema({
-  title: String,
-  image: String,
-  price: String,
-  description: String,
-  email: String
-})
 
 const ShiftSchema = new mongoose.Schema({
   startTime: String,
@@ -64,7 +57,6 @@ const StaffUserSchema = new Schema({
   }
 })
 
-exports.ItemModel = mongoose.model("Item", ItemSchema)
 exports.ShiftModel = mongoose.model("Shift", ShiftSchema);
 exports.KokoroDataModel = mongoose.model("KokoroData", KokoroDataSchema)
 exports.AdminUserModel = mongoose.model("AdminUser", AdminUserSchema)
