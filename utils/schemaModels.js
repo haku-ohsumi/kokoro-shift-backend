@@ -10,7 +10,7 @@ const ItemSchema = new Schema({
   email: String
 })
 
-const WorkTimeSchema = new mongoose.Schema({
+const ShiftSchema = new mongoose.Schema({
   startTime: String,
   endTime: String,
 });
@@ -65,7 +65,7 @@ const StaffUserSchema = new Schema({
 })
 
 exports.ItemModel = mongoose.model("Item", ItemSchema)
-exports.WorkTimeModel = mongoose.model("WorkTime", WorkTimeSchema);
+exports.ShiftModel = mongoose.model("Shift", ShiftSchema);
 exports.KokoroDataModel = mongoose.model("KokoroData", KokoroDataSchema)
 exports.AdminUserModel = mongoose.model("AdminUser", AdminUserSchema)
 exports.StaffUserModel = mongoose.model("StaffUser", StaffUserSchema)

@@ -8,22 +8,22 @@ app.use(express.json())
 const jwt = require("jsonwebtoken")
 const auth = require("./utils/auth")
 const connectDB = require("./utils/database")
-const { ItemModel, AdminUserModel, StaffUserModel, KokoroDataModel, WorkTimeModel } = require("./utils/schemaModels")
+const { ItemModel, AdminUserModel, StaffUserModel, KokoroDataModel, ShiftModel } = require("./utils/schemaModels")
 
 
 
-app.post("/api/save-work-time", async (req, res) => {
+app.post("/admin/staffId/shift-management", async (req, res) => {
   try {
     connectDB()
     const { startTime, endTime } = req.body;
 
-    const workTime = new WorkTimeModel({ startTime, endTime });
-    await workTime.save();
+    const Shift = new ShiftModel({ startTime, endTime });
+    await Shift.save();
 
-    res.status(200).json({ message: "Work time saved successfully" });
+    res.status(200).json({ message: "シフトが保存されました" });
   } catch (error) {
     console.error("Error:", error);
-    res.status(500).json({ message: "Failed to save work time" });
+    res.status(500).json({ message: "シフトが保存できませんでした" });
   }
 });
 
