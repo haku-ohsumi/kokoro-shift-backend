@@ -10,6 +10,18 @@ const auth = require("./utils/auth")
 const connectDB = require("./utils/database")
 const { AdminUserModel, StaffUserModel, KokoroDataModel, ShiftModel } = require("./utils/schemaModels")
 
+// スタッフ選択画面
+// スタッフユーザーデータを取得するエンドポイント
+app.get("/api/staffUsers", async (req, res) => {
+  try {
+    connectDB()
+    const staffUsers = await StaffUserModel.find();
+    res.json(staffUsers);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "データの取得に失敗しました" });
+  }
+});
 
 // シフト管理
 // シフト作成
