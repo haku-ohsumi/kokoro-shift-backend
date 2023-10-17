@@ -4,8 +4,18 @@ const Schema = mongoose.Schema
 
 
 const ShiftSchema = new mongoose.Schema({
-  startTime: String,
-  endTime: String,
+  startTime: {
+    type: Date,
+    required: true,
+  },
+  endTime: {
+    type: Date,
+    required: true,
+  },
+  staffIdAdmin: {
+    type: String,
+    required: true,
+  },
 });
 
 

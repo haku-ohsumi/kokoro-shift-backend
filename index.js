@@ -25,17 +25,21 @@ app.get("/api/staffUsers", async (req, res) => {
 
 // シフト管理
 // シフト作成
-app.post("/admin/staffId/shift-management", async (req, res) => {
+app.post("/admin/:staffIdAdmin/shift-management", async (req, res) => {
+
+  const staffIdAdmin = req.params.staffIdAdmin;
+
   try {
     connectDB()
-    const { startTime, endTime } = req.body;
+    const { startTime, endTime,} = req.body;
 
-    const Shift = new ShiftModel({ startTime, endTime });
+    const Shift = new ShiftModel({ startTime, endTime, staffIdAdmin: staffIdAdmin });
     await Shift.save();
 
     res.status(200).json({ message: "シフトが保存されました" });
   } catch (error) {
     console.error("Error:", error);
+    console.log( staffIdAdmin )
     res.status(500).json({ message: "シフトが保存できませんでした" });
   }
 });
