@@ -44,6 +44,17 @@ app.post("/admin/:staffIdAdmin/shift-management", async (req, res) => {
   }
 });
 
+// シフト読み取り
+app.get('/api/shifts', async (req, res) => {
+  try {
+    connectDB()
+    const shifts = await ShiftModel.find(); // データベースからシフトを取得
+    res.status(200).json(shifts);
+  } catch (error) {
+    res.status(500).json({ message: 'シフトの読み込みに失敗しました' });
+  }
+});
+
 
 // ココロステート
 // 「ココロの状態」を保存
