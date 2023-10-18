@@ -55,6 +55,25 @@ app.get('/api/shifts', async (req, res) => {
   }
 });
 
+// イベント削除のAPIエンドポイント
+app.delete('/api/delete-event/:eventId', async (req, res) => {
+  try {
+    connectDB()
+    const eventId = req.params.eventId;
+    // データベースから該当のイベントを削除
+    const deletedEvent = await ShiftModel.findByIdAndDelete(eventId);
+
+    if (deletedEvent) {
+      res.status(204).send(); // 204 No Contentを返す
+    } else {
+      res.status(404).json({ message: '指定されたイベントが見つかりません' });
+    }
+  } catch (error) {
+    console.error('イベントの削除に失敗しました:', error);
+    res.status(500).json({ message: 'イベントの削除に失敗しました' });
+  }
+});
+
 
 // ココロステート
 // 「ココロの状態」を保存
