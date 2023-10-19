@@ -12,7 +12,7 @@ const { AdminUserModel, StaffUserModel, KokoroDataModel, ShiftModel } = require(
 
 // スタッフ選択画面
 // スタッフユーザーデータを取得するエンドポイント
-app.get("/api/staffUsers", async (req, res) => {
+app.get("/admin/staff/select", async (req, res) => {
   try {
     connectDB()
     const staffUsers = await StaffUserModel.find();
@@ -45,7 +45,7 @@ app.post("/admin/:staffIdAdmin/shift-management", async (req, res) => {
 });
 
 // シフト読み取り
-app.get('/api/shifts', async (req, res) => {
+app.get('/admin/shift/read', async (req, res) => {
   try {
     connectDB()
     const shifts = await ShiftModel.find(); // データベースからシフトを取得
@@ -56,7 +56,7 @@ app.get('/api/shifts', async (req, res) => {
 });
 
 // イベント削除のAPIエンドポイント
-app.delete('/api/delete-event/:eventId', async (req, res) => {
+app.delete('/admin/shift/delete/:eventId', async (req, res) => {
   try {
     connectDB()
     const eventId = req.params.eventId;
@@ -66,11 +66,11 @@ app.delete('/api/delete-event/:eventId', async (req, res) => {
     if (deletedEvent) {
       res.status(204).send(); // 204 No Contentを返す
     } else {
-      res.status(404).json({ message: '指定されたイベントが見つかりません' });
+      res.status(404).json({ message: 'シフトが見つかりません' });
     }
   } catch (error) {
-    console.error('イベントの削除に失敗しました:', error);
-    res.status(500).json({ message: 'イベントの削除に失敗しました' });
+    console.error('シフトの削除に失敗しました:', error);
+    res.status(500).json({ message: 'シフトの削除に失敗しました' });
   }
 });
 
@@ -89,9 +89,9 @@ app.post("/staff/kokoro/state/:staffId", async (req, res) => {
     });
     await newKokoroData.save();
 
-    return res.status(200).json({ message: "データが正常に保存されました" });
+    return res.status(200).json({ message: "シフトが正常に保存されました" });
   } catch (error) {
-    return res.status(500).json({ message: "データの保存中にエラーが発生しました" });
+    return res.status(500).json({ message: "シフトの保存中にエラーが発生しました" });
   }
 });
 
