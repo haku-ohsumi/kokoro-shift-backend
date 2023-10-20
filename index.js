@@ -119,7 +119,7 @@ app.get('/api/calculate-kokoro-risk/:staffIdAdmin', async (req, res) => {
 });
 
 // ココロシフト
-// イベントのタイトルを更新するエンドポイント
+// ココロシフト申請
 app.patch('/admin/kokoro-shift/application/:eventId', async (req, res) => {
   try {
     connectDB(); // データベースに接続
@@ -145,7 +145,7 @@ app.patch('/admin/kokoro-shift/application/:eventId', async (req, res) => {
   }
 });
 
-// イベントのタイトルを更新するエンドポイント
+// ココロシフト承認
 app.patch('/admin/kokoro-shift/agreement/:eventId/:staffIdAdmin', async (req, res) => {
   try {
     connectDB(); // データベースに接続
@@ -157,8 +157,7 @@ app.patch('/admin/kokoro-shift/agreement/:eventId/:staffIdAdmin', async (req, re
     // 指定されたイベントIDを持つイベントをデータベースから検索してタイトルを更新
     const updatedEvent = await ShiftModel.findByIdAndUpdate(
       eventId,
-      { title: newTitle },
-      { staffIdAdmin: newStaffIdAdmin },
+      { title: newTitle, staffIdAdmin: newStaffIdAdmin },
       { new: true }
     );
 
