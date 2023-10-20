@@ -34,7 +34,8 @@ app.post("/admin/:staffIdAdmin/shift-management", async (req, res) => {
     connectDB()
     const { startTime, endTime,} = req.body;
 
-    const Shift = new ShiftModel({ startTime, endTime, staffIdAdmin: staffIdAdmin });
+    const Shift = new ShiftModel({ startTime, endTime, staffIdAdmin: staffIdAdmin,
+    title: "シフト" });
     await Shift.save();
 
     res.status(200).json({ message: "シフトが保存されました" });
