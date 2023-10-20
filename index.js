@@ -9,6 +9,7 @@ const jwt = require("jsonwebtoken")
 const auth = require("./utils/auth")
 const connectDB = require("./utils/database")
 const { AdminUserModel, StaffUserModel, KokoroDataModel, ShiftModel } = require("./utils/schemaModels")
+const calculateKokoroRisk = require('./utils/kokoroRisk');
 
 // スタッフ選択画面
 // スタッフユーザーデータを取得するエンドポイント
@@ -75,7 +76,7 @@ app.delete('/admin/shift/delete/:eventId', async (req, res) => {
 });
 
 
-// ココロステート
+// ココロリスク
 // 「ココロの状態」を保存
 app.post("/staff/kokoro/state/:staffId", async (req, res) => {
 
@@ -92,6 +93,27 @@ app.post("/staff/kokoro/state/:staffId", async (req, res) => {
     return res.status(200).json({ message: "シフトが正常に保存されました" });
   } catch (error) {
     return res.status(500).json({ message: "シフトの保存中にエラーが発生しました" });
+  }
+});
+
+// リスクを計算するエンドポイント
+app.get('/api/calculate-kokoro-risk/:staffIdAdmin', async (req, res) => {
+
+  const staffIdAdmin = req.params.staffIdAdmin;
+
+  try {
+    console.log(staffIdAdmin)
+    const riskData = await calculateKokoroRisk(staffIdAdmin); // calculateKokoroRisk 関数を staffIdAdmin と共に実行
+
+    if (riskData) {
+      res.json({ kokoroRisk: riskData }); // リスクデータから kokoroRisk をフロントに返す
+      console.log(riskData)
+    } else {
+      res.status(404).json({ error: '該当のリスクデータが見つかりません' });
+    }
+  } catch (error) {
+    console.error('ココロリスクの取得に失敗しました:', error);
+    res.status(500).json({ error: 'ココロリスクの取得に失敗しました' });
   }
 });
 
