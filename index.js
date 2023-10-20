@@ -118,7 +118,7 @@ app.get('/api/calculate-kokoro-risk/:staffIdAdmin', async (req, res) => {
   }
 });
 
-
+// ココロシフト
 // イベントのタイトルを更新するエンドポイント
 app.patch('/admin/kokoro-shift/application/:eventId', async (req, res) => {
   try {
@@ -131,6 +131,34 @@ app.patch('/admin/kokoro-shift/application/:eventId', async (req, res) => {
     const updatedEvent = await ShiftModel.findByIdAndUpdate(
       eventId,
       { title: newTitle },
+      { new: true }
+    );
+
+    if (!updatedEvent) {
+      return res.status(404).json({ error: 'イベントが見つかりません' });
+    }
+
+    res.json(updatedEvent);
+  } catch (error) {
+    console.error('エラー:', error);
+    res.status(500).json({ error: 'イベントの更新に失敗しました' });
+  }
+});
+
+// イベントのタイトルを更新するエンドポイント
+app.patch('/admin/kokoro-shift/agreement/:eventId/:staffIdAdmin', async (req, res) => {
+  try {
+    connectDB(); // データベースに接続
+    const { eventId } = req.params;
+    const { staffIdAdmin } = req.params;
+    const newTitle = 'シフト'; // 新しいタイトル
+    const newStaffIdAdmin = staffIdAdmin; // 新しいタイトル
+
+    // 指定されたイベントIDを持つイベントをデータベースから検索してタイトルを更新
+    const updatedEvent = await ShiftModel.findByIdAndUpdate(
+      eventId,
+      { title: newTitle },
+      { staffIdAdmin: newStaffIdAdmin },
       { new: true }
     );
 
