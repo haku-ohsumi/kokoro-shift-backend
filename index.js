@@ -172,6 +172,32 @@ app.patch('/admin/kokoro-shift/agreement/:eventId/:staffIdAdmin', async (req, re
   }
 });
 
+// ココロシフト却下
+app.patch('/admin/kokoro-shift/dismiss/:eventId', async (req, res) => {
+  try {
+    connectDB(); // データベースに接続
+    const { eventId } = req.params;
+    console.log("eventId:", eventId )
+    const newTitle = 'シフト'; // 新しいタイトル
+
+    // 指定されたイベントIDを持つイベントをデータベースから検索してタイトルを更新
+    const updatedEvent = await ShiftModel.findByIdAndUpdate(
+      eventId,
+      { title: newTitle },
+      { new: true }
+    );
+
+    if (!updatedEvent) {
+      return res.status(404).json({ error: 'イベントが見つかりません' });
+    }
+
+    res.json(updatedEvent);
+  } catch (error) {
+    console.error('エラー:', error);
+    res.status(500).json({ error: 'イベントの更新に失敗しました' });
+  }
+});
+
 
 //ユーザー
 //管理者登録
