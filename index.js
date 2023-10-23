@@ -201,7 +201,7 @@ app.post("/admin/shift-management/:staffIdAdmin/:startTime/:endTime", async (req
   const { startTime } = req.params;
   const { endTime } = req.params;
   const staffIdAdmin = req.params.staffIdAdmin;
-  const title = 'ココロシフト';
+  const title = 'ココロシフト（時給円UP）';
 
   try {
     connectDB()
