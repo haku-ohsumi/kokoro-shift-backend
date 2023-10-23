@@ -56,7 +56,7 @@ app.get('/admin/shift/read', async (req, res) => {
   }
 });
 
-// イベント削除のAPIエンドポイント
+// シフト削除
 app.delete('/admin/shift/delete/:eventId', async (req, res) => {
   try {
     connectDB()
@@ -96,7 +96,7 @@ app.post("/staff/kokoro/state/:staffId", async (req, res) => {
   }
 });
 
-// リスクを計算するエンドポイント
+// ココロリスク計算
 app.get('/api/calculate-kokoro-risk/:staffIdAdmin', async (req, res) => {
 
   const staffIdAdmin = req.params.staffIdAdmin;
@@ -149,7 +149,7 @@ app.patch('/admin/kokoro-shift/agreement/:eventId/:staffIdAdmin', async (req, re
     const { eventId } = req.params;
     const { staffIdAdmin } = req.params;
     const newTitle = 'シフト'; // 新しいタイトル
-    const newStaffIdAdmin = staffIdAdmin; // 新しいタイトル
+    const newStaffIdAdmin = staffIdAdmin;
 
     // 指定されたイベントIDを持つイベントをデータベースから検索してタイトルを更新
     const updatedEvent = await ShiftModel.findByIdAndUpdate(
@@ -166,6 +166,27 @@ app.patch('/admin/kokoro-shift/agreement/:eventId/:staffIdAdmin', async (req, re
   } catch (error) {
     console.error('エラー:', error);
     res.status(500).json({ error: 'イベントの更新に失敗しました' });
+  }
+});
+
+// ココロシフト追加
+app.post("/admin/shift-management/:staffIdAdmin/:startTime/:endTime", async (req, res) => {
+
+  const { startTime } = req.params;
+  const { endTime } = req.params;
+  const staffIdAdmin = req.params.staffIdAdmin;
+  const title = 'ココロシフト';
+
+  try {
+    connectDB()
+    const Shift = new ShiftModel({ startTime: startTime, endTime: endTime, staffIdAdmin: staffIdAdmin,
+    title: title });
+    await Shift.save();
+
+    res.status(200).json({ message: "ココロシフトが保存されました" });
+  } catch (error) {
+    console.error("Error:", error);
+    res.status(500).json({ message: "ココロシフトが保存できませんでした" });
   }
 });
 
