@@ -174,7 +174,6 @@ app.patch('/admin/kokoro-shift/dismiss/:eventId', async (req, res) => {
   try {
     connectDB(); // データベースに接続
     const { eventId } = req.params;
-    console.log("eventId:", eventId )
     const newTitle = 'シフト'; // 新しいタイトル
 
     // 指定されたイベントIDを持つイベントをデータベースから検索してタイトルを更新
