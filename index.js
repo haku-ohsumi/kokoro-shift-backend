@@ -90,6 +90,17 @@ app.post("/api/wage", async (req, res) => {
   }
 });
 
+// ココロシフト時給アップ読み取り
+app.get('/admin/wage-up/read', async (req, res) => {
+  try {
+    connectDB()
+    const wageUp = await WageUpDataModel.find(); // データベースからシフトを取得
+    res.status(200).json(wageUp);
+  } catch (error) {
+    res.status(500).json({ message: 'ココロシフト時給アップの読み込みに失敗しました' });
+  }
+});
+
 
 // ココロリスク
 // 「ココロの状態」を保存
