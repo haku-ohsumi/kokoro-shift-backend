@@ -41,7 +41,6 @@ app.post("/admin/:staffIdAdmin/shift-management", async (req, res) => {
     res.status(200).json({ message: "シフトが保存されました" });
   } catch (error) {
     console.error("Error:", error);
-    console.log( staffIdAdmin )
     res.status(500).json({ message: "シフトが保存できませんでした" });
   }
 });
@@ -103,12 +102,10 @@ app.get('/api/calculate-kokoro-risk/:staffIdAdmin', async (req, res) => {
   const staffIdAdmin = req.params.staffIdAdmin;
 
   try {
-    console.log(staffIdAdmin)
     const riskData = await calculateKokoroRisk(staffIdAdmin); // calculateKokoroRisk 関数を staffIdAdmin と共に実行
 
     if (riskData) {
       res.json({ kokoroRisk: riskData }); // リスクデータから kokoroRisk をフロントに返す
-      console.log(riskData)
     } else {
       res.status(404).json({ error: '該当のリスクデータが見つかりません' });
     }
