@@ -39,6 +39,10 @@ const KokoroDataSchema = new mongoose.Schema({
   // 他にも必要なフィールドがあればここに追加できます
 });
 
+const WageUpDataSchema = new mongoose.Schema({
+  wageUp: Number,
+});
+
 const AdminUserSchema = new Schema({
   name: {
     type: String,
@@ -73,5 +77,6 @@ const StaffUserSchema = new Schema({
 
 exports.ShiftModel = mongoose.model("Shift", ShiftSchema);
 exports.KokoroDataModel = mongoose.model("KokoroData", KokoroDataSchema)
+exports.WageUpDataModel = mongoose.model("WageUpData", WageUpDataSchema)
 exports.AdminUserModel = mongoose.model("AdminUser", AdminUserSchema)
 exports.StaffUserModel = mongoose.model("StaffUser", StaffUserSchema)

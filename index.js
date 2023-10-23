@@ -8,7 +8,7 @@ app.use(express.json())
 const jwt = require("jsonwebtoken")
 const auth = require("./utils/auth")
 const connectDB = require("./utils/database")
-const { AdminUserModel, StaffUserModel, KokoroDataModel, ShiftModel } = require("./utils/schemaModels")
+const { AdminUserModel, StaffUserModel, KokoroDataModel, ShiftModel, WageUpDataModel } = require("./utils/schemaModels")
 const calculateKokoroRisk = require('./utils/kokoroRisk');
 
 // スタッフ選択画面
@@ -72,6 +72,21 @@ app.delete('/admin/shift/delete/:eventId', async (req, res) => {
   } catch (error) {
     console.error('シフトの削除に失敗しました:', error);
     res.status(500).json({ message: 'シフトの削除に失敗しました' });
+  }
+});
+
+// ココロシフト時給アップ登録
+app.post("/api/wage", async (req, res) => {
+  const { wageUp } = req.body;
+  console.log(wageUp)
+
+  try {
+    connectDB()
+    const newWageUp = new WageUpDataModel({ wageUp: wageUp });
+    await newWageUp.save();
+    res.json({ message: "ココロシフト時給アップが正常に登録されました" });
+  } catch (error) {
+    res.status(500).json({ error: "ココロシフト時給アップの登録中にエラーが発生しました" });
   }
 });
 
