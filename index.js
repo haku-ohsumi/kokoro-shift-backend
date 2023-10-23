@@ -196,7 +196,7 @@ app.patch('/admin/kokoro-shift/dismiss/:eventId', async (req, res) => {
 
 
 //ユーザー
-//管理者登録
+//オーナー登録
 app.post("/admin/user/register", async(req, res) => {
   try{
     await connectDB()
@@ -207,7 +207,7 @@ app.post("/admin/user/register", async(req, res) => {
   }
 })
 
-//管理者ログイン
+//オーナーログイン
 const admin_secret_key = "admin-secret"
 
 app.post("/admin/user/login", async(req, res) => {
@@ -225,7 +225,7 @@ app.post("/admin/user/login", async(req, res) => {
         return req.status(400).json({message: "ログイン失敗: パスワードが間違っています"})
       }
     }else{
-      return res.status(400).json({message: "ログイン失敗: 管理者登録をしてください"})
+      return res.status(400).json({message: "ログイン失敗: ユーザー登録をしてください"})
     }
   }catch(err){
     return res.status(400).json({message: "ログイン失敗"})
@@ -264,7 +264,7 @@ app.post("/staff/user/login", async(req, res) => {
         return req.status(400).json({message: "ログイン失敗: パスワードが間違っています"})
       }
     }else{
-      return res.status(400).json({message: "ログイン失敗: 管理者登録をしてください"})
+      return res.status(400).json({message: "ログイン失敗: ユーザー登録をしてください"})
     }
   }catch(err){
     return res.status(400).json({message: "ログイン失敗"})
