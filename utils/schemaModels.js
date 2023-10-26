@@ -20,6 +20,9 @@ const ShiftSchema = new mongoose.Schema({
     type: String,
     // required: true,
   },
+  wageUp: {
+    type: Number,
+  }
 });
 
 
@@ -36,7 +39,6 @@ const KokoroDataSchema = new mongoose.Schema({
     type: Date, // データを保存した日時
     default: Date.now,
   },
-  // 他にも必要なフィールドがあればここに追加できます
 });
 
 const WageUpDataSchema = new mongoose.Schema({

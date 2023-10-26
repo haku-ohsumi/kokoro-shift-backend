@@ -196,17 +196,19 @@ app.patch('/admin/kokoro-shift/agreement/:eventId/:staffIdAdmin', async (req, re
 });
 
 // ココロシフト追加
-app.post("/admin/shift-management/:staffIdAdmin/:startTime/:endTime", async (req, res) => {
+app.post("/admin/shift-management/:staffIdAdmin/:startTime/:endTime/:latestWageUp", async (req, res) => {
 
   const { startTime } = req.params;
   const { endTime } = req.params;
+  const { latestWageUp } = req.params;
   const staffIdAdmin = req.params.staffIdAdmin;
-  const title = 'ココロシフト（時給円UP）';
+
+  const title = `ココロシフト`;
 
   try {
     connectDB()
     const Shift = new ShiftModel({ startTime: startTime, endTime: endTime, staffIdAdmin: staffIdAdmin,
-    title: title });
+    title: title, wageUp: latestWageUp });
     await Shift.save();
 
     res.status(200).json({ message: "ココロシフトが保存されました" });
