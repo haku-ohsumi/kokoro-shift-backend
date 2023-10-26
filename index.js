@@ -103,7 +103,7 @@ app.get('/admin/wage-up/read', async (req, res) => {
 
 
 // ココロリスク
-// 「ココロの状態」を保存
+// 「ココロポイント」を保存
 app.post("/staff/kokoro/state/:staffId", async (req, res) => {
 
   const staffId = req.params.staffId;
