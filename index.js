@@ -76,7 +76,7 @@ app.delete('/admin/shift/delete/:eventId', async (req, res) => {
 });
 
 // ココロシフト時給アップ登録
-app.post("/api/wage", async (req, res) => {
+app.post("/admin/shift/wage-up/register", async (req, res) => {
   const { wageUp } = req.body;
   console.log(wageUp)
 
@@ -91,7 +91,7 @@ app.post("/api/wage", async (req, res) => {
 });
 
 // ココロシフト時給アップ読み取り
-app.get('/admin/wage-up/read', async (req, res) => {
+app.get('/admin/shift/wage-up/read', async (req, res) => {
   try {
     connectDB()
     const wageUp = await WageUpDataModel.find(); // データベースからシフトを取得
@@ -123,7 +123,7 @@ app.post("/staff/kokoro/state/:staffId", async (req, res) => {
 });
 
 // ココロリスク計算
-app.get('/api/calculate-kokoro-risk/:staffIdAdmin', async (req, res) => {
+app.get('/admin/kokoro-risk/calculate/:staffIdAdmin', async (req, res) => {
 
   const staffIdAdmin = req.params.staffIdAdmin;
 
