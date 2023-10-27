@@ -306,9 +306,10 @@ app.post("/staff/user/login", async(req, res) => {
         }
 
         const staffId = savedStaffUserData._id;
+        const staffName = savedStaffUserData.name;
 
         const staffToken = jwt.sign(payload, staff_secret_key, {expiresIn: "23h"})
-        return res.status(200).json({message: `ログイン成功, staffId: ${staffId}`, staffToken, tokenType: "staff-token", staffId})
+        return res.status(200).json({message: `ログイン成功, staffId: ${staffId}`, staffToken, tokenType: "staff-token", staffId, staffName})
       }else{
         return req.status(400).json({message: "ログイン失敗: パスワードが間違っています"})
       }
