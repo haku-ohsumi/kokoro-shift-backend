@@ -185,18 +185,19 @@ app.patch('/admin/kokoro-shift/application/:eventId', async (req, res) => {
 });
 
 // ココロシフト承認
-app.patch('/admin/kokoro-shift/agreement/:eventId/:staffIdAdmin', async (req, res) => {
+app.patch('/admin/kokoro-shift/agreement/:eventId/:staffIdAdmin/:latestWageUp', async (req, res) => {
   try {
     connectDB(); // データベースに接続
     const { eventId } = req.params;
     const { staffIdAdmin } = req.params;
-    const newTitle = 'シフト'; // 新しいタイトル
+    const { latestWageUp } = req.params;
+    const newTitle = 'ココロシフト'; // 新しいタイトル
     const newStaffIdAdmin = staffIdAdmin;
 
     // 指定されたイベントIDを持つイベントをデータベースから検索してタイトルを更新
     const updatedEvent = await ShiftModel.findByIdAndUpdate(
       eventId,
-      { title: newTitle, staffIdAdmin: newStaffIdAdmin },
+      { title: newTitle, staffIdAdmin: newStaffIdAdmin, wageUp: latestWageUp },
       { new: true }
     );
 
