@@ -75,6 +75,22 @@ app.delete('/admin/shift/delete/:eventId', async (req, res) => {
   }
 });
 
+// バックエンドでStaffUserModelを使用してスタッフ名を取得するエンドポイントを追加
+app.get('/admin/staff/get-name/:staffId', async (req, res) => {
+  try {
+    const staffId = req.params.staffId;
+    const staff = await StaffUserModel.findById(staffId);
+    if (staff) {
+      res.status(200).json({ name: staff.name });
+    } else {
+      res.status(404).json({ message: 'スタッフが見つかりません' });
+    }
+  } catch (error) {
+    res.status(500).json({ message: 'スタッフ名の取得に失敗しました', error: error });
+  }
+});
+
+
 // ココロシフト時給アップ登録
 app.post("/admin/shift/wage-up/register", async (req, res) => {
   const { wageUp } = req.body;
@@ -309,7 +325,7 @@ app.post("/staff/user/login", async(req, res) => {
         const staffName = savedStaffUserData.name;
 
         const staffToken = jwt.sign(payload, staff_secret_key, {expiresIn: "23h"})
-        return res.status(200).json({message: `ログイン成功, staffId: ${staffId}`, staffToken, tokenType: "staff-token", staffId, staffName})
+        return res.status(200).json({message: "ログイン成功", staffToken, tokenType: "staff-token", staffId, staffName})
       }else{
         return req.status(400).json({message: "ログイン失敗: パスワードが間違っています"})
       }
