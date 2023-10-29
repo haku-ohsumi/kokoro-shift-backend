@@ -28,15 +28,15 @@ const ShiftSchema = new mongoose.Schema({
 
 const KokoroDataSchema = new mongoose.Schema({
   kokoroState: {
-    type: Number, // ココロの状態を表す数値
+    type: Number,
     required: true,
   },
   staffId: {
-    type: String, // StaffIDを保存するためのフィールド
+    type: String,
     required: true,
   },
   date: {
-    type: Date, // データを保存した日時
+    type: Date,
     default: Date.now,
   },
 });

@@ -11,8 +11,9 @@ const connectDB = require("./utils/database")
 const { AdminUserModel, StaffUserModel, KokoroDataModel, ShiftModel, WageUpDataModel } = require("./utils/schemaModels")
 const calculateKokoroRisk = require('./utils/kokoroRisk');
 
-// スタッフ選択画面
-// スタッフユーザーデータを取得するエンドポイント
+
+// シフト管理
+// スタッフ選択
 app.get("/admin/staff/select", async (req, res) => {
   try {
     connectDB()
@@ -24,7 +25,6 @@ app.get("/admin/staff/select", async (req, res) => {
   }
 });
 
-// シフト管理
 // シフト作成
 app.post("/admin/:staffIdAdmin/shift-management", async (req, res) => {
 
@@ -49,7 +49,7 @@ app.post("/admin/:staffIdAdmin/shift-management", async (req, res) => {
 app.get('/admin/shift/read', async (req, res) => {
   try {
     connectDB()
-    const shifts = await ShiftModel.find(); // データベースからシフトを取得
+    const shifts = await ShiftModel.find();
     res.status(200).json(shifts);
   } catch (error) {
     res.status(500).json({ message: 'シフトの読み込みに失敗しました' });
@@ -61,11 +61,10 @@ app.delete('/admin/shift/delete/:eventId', async (req, res) => {
   try {
     connectDB()
     const eventId = req.params.eventId;
-    // データベースから該当のイベントを削除
     const deletedEvent = await ShiftModel.findByIdAndDelete(eventId);
 
     if (deletedEvent) {
-      res.status(204).send(); // 204 No Contentを返す
+      res.status(204).send();
     } else {
       res.status(404).json({ message: 'シフトが見つかりません' });
     }
@@ -90,7 +89,6 @@ app.get('/admin/staff/get-name/:staffId', async (req, res) => {
   }
 });
 
-
 // ココロシフト時給アップ登録
 app.post("/admin/shift/wage-up/register", async (req, res) => {
   const { wageUp } = req.body;
@@ -110,7 +108,7 @@ app.post("/admin/shift/wage-up/register", async (req, res) => {
 app.get('/admin/shift/wage-up/read', async (req, res) => {
   try {
     connectDB()
-    const wageUp = await WageUpDataModel.find(); // データベースからシフトを取得
+    const wageUp = await WageUpDataModel.find();
     res.status(200).json(wageUp);
   } catch (error) {
     res.status(500).json({ message: 'ココロシフト時給アップの読み込みに失敗しました' });
@@ -125,7 +123,6 @@ app.post("/staff/kokoro/state/:staffId", async (req, res) => {
   const staffId = req.params.staffId;
 
   try {
-    // データベースに新しいデータを保存
     const newKokoroData = new KokoroDataModel({
       kokoroState: req.body.kokoroState,
       staffId: staffId,
@@ -157,16 +154,16 @@ app.get('/admin/kokoro-risk/calculate/:staffIdAdmin', async (req, res) => {
   }
 });
 
+
 // ココロシフト
 // ココロシフト申請
 app.patch('/admin/kokoro-shift/application/:eventId', async (req, res) => {
   try {
-    connectDB(); // データベースに接続
+    connectDB();
 
     const { eventId } = req.params;
-    const newTitle = 'ココロシフト申請中'; // 新しいタイトル
+    const newTitle = 'ココロシフト申請中';
 
-    // 指定されたイベントIDを持つイベントをデータベースから検索してタイトルを更新
     const updatedEvent = await ShiftModel.findByIdAndUpdate(
       eventId,
       { title: newTitle },
@@ -187,14 +184,13 @@ app.patch('/admin/kokoro-shift/application/:eventId', async (req, res) => {
 // ココロシフト承認
 app.patch('/admin/kokoro-shift/agreement/:eventId/:staffIdAdmin/:latestWageUp', async (req, res) => {
   try {
-    connectDB(); // データベースに接続
+    connectDB();
     const { eventId } = req.params;
     const { staffIdAdmin } = req.params;
     const { latestWageUp } = req.params;
-    const newTitle = 'ココロシフト'; // 新しいタイトル
+    const newTitle = 'ココロシフト';
     const newStaffIdAdmin = staffIdAdmin;
 
-    // 指定されたイベントIDを持つイベントをデータベースから検索してタイトルを更新
     const updatedEvent = await ShiftModel.findByIdAndUpdate(
       eventId,
       { title: newTitle, staffIdAdmin: newStaffIdAdmin, wageUp: latestWageUp },
@@ -238,11 +234,10 @@ app.post("/admin/shift-management/:staffIdAdmin/:startTime/:endTime/:latestWageU
 // ココロシフト却下
 app.patch('/admin/kokoro-shift/dismiss/:eventId', async (req, res) => {
   try {
-    connectDB(); // データベースに接続
+    connectDB();
     const { eventId } = req.params;
-    const newTitle = 'シフト'; // 新しいタイトル
+    const newTitle = 'シフト';
 
-    // 指定されたイベントIDを持つイベントをデータベースから検索してタイトルを更新
     const updatedEvent = await ShiftModel.findByIdAndUpdate(
       eventId,
       { title: newTitle },
