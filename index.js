@@ -8,139 +8,280 @@ app.use(express.json())
 const jwt = require("jsonwebtoken")
 const auth = require("./utils/auth")
 const connectDB = require("./utils/database")
-const { ItemModel, UserModel } = require("./utils/schemaModels")
+const { AdminUserModel, StaffUserModel, KokoroDataModel, ShiftModel, WageUpDataModel } = require("./utils/schemaModels")
+const calculateKokoroRisk = require('./utils/kokoroRisk');
 
-//「ココロの状態」
-//「ココロの状態」回答
-app.post("/kokoro/respond", auth, async(req, res) => {
+
+// シフト管理
+// スタッフ選択
+app.get("/admin/staff/select", async (req, res) => {
   try {
-  connectDB()
-  await ItemModel.create(req.body)
-  return res.status(200).json({message: "アイテム作成成功"})
-  }catch(err){
-    return res.status(400).json({message: "アイテム作成失敗"})
+    connectDB()
+    const staffUsers = await StaffUserModel.find();
+    res.json(staffUsers);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "データの取得に失敗しました" });
   }
-})
+});
 
-//「ココロ危険度」閲覧
-app.get("/kokoro-risk", async(req, res) => {
-  try{
-    await connectDB()
-    const allItems = await ItemModel.find()
-    return res.status(200).json({message: "アイテムの読み取り成功（オール）", allItems: allItems})
-  }catch(err){
-    return res.status(400).json({message: "アイテムの読み取り失敗（オール）"})
-  }
-})
+// シフト作成
+app.post("/admin/:staffIdAdmin/shift-management", async (req, res) => {
 
+  const staffIdAdmin = req.params.staffIdAdmin;
 
-//シフト
-//シフト作成
-app.post("/shift/create/:id", auth, async(req, res) => {
   try {
-  connectDB()
-  await ItemModel.create(req.body)
-  return res.status(200).json({message: "アイテム作成成功"})
-  }catch(err){
-    return res.status(400).json({message: "アイテム作成失敗"})
-  }
-})
+    connectDB()
+    const { startTime, endTime,} = req.body;
 
-//シフト修正
-app.put("/shift/update/:id", auth, async(req, res) => {
-  try{
-    await connectDB()
-    const singleItem = await ItemModel.findById(req.params.id)
-    if (singleItem.email === req.body.email){
-      await ItemModel.updateOne({_id: req.params.id}, req.body)
-      return res.status(200).json({message: "アイテム編集成功（シングル）", singleItem: singleItem})
-    }else{
-      throw new Error()
+    const Shift = new ShiftModel({ startTime, endTime, staffIdAdmin: staffIdAdmin,
+    title: "シフト" });
+    await Shift.save();
+
+    res.status(200).json({ message: "シフトが保存されました" });
+  } catch (error) {
+    console.error("Error:", error);
+    res.status(500).json({ message: "シフトが保存できませんでした" });
+  }
+});
+
+// シフト読み取り
+app.get('/admin/shift/read', async (req, res) => {
+  try {
+    connectDB()
+    const shifts = await ShiftModel.find();
+    res.status(200).json(shifts);
+  } catch (error) {
+    res.status(500).json({ message: 'シフトの読み込みに失敗しました' });
+  }
+});
+
+// シフト削除
+app.delete('/admin/shift/delete/:eventId', async (req, res) => {
+  try {
+    connectDB()
+    const eventId = req.params.eventId;
+    const deletedEvent = await ShiftModel.findByIdAndDelete(eventId);
+
+    if (deletedEvent) {
+      res.status(204).send();
+    } else {
+      res.status(404).json({ message: 'シフトが見つかりません' });
     }
-  }catch(err){
-    return res.status(400).json({message: "アイテム編集失敗"})
+  } catch (error) {
+    console.error('シフトの削除に失敗しました:', error);
+    res.status(500).json({ message: 'シフトの削除に失敗しました' });
   }
-})
+});
 
-//シフト削除
-app.delete("/shift/delete/:id", auth, async(req, res) => {
-  try{
-    await connectDB()
-    const singleItem = await ItemModel.findById(req.params.id)
-    if(singleItem.email === req.body.email){
-      await ItemModel.deleteOne({_id: req.params.id})
-      return res.status(200).json({message: "アイテム削除成功"})
-    }else{
-      throw new Error()
-    }
-  }catch(err){
-    return res.status(400).json({message: "アイテム削除失敗"})
-  }
-})
-
-//シフト閲覧
-app.get("/shift/:id", async(req, res) => {
-  try{
-    await connectDB()
-    const singleItem = await ItemModel.findById(req.params.id)
-    return res.status(200).json({message: "アイテム読み取り成功（シングル）", singleItem: singleItem})
-  }catch(err){
-    return res.status(400).json({message: "アイテム読み取り失敗（シングル）"})
-  }
-})
-
-//シフト閲覧（従業員）
-app.get("/shift/employee:id", async(req, res) => {
-  try{
-    await connectDB()
-    const singleItem = await ItemModel.findById(req.params.id)
-    return res.status(200).json({message: "アイテム読み取り成功（シングル）", singleItem: singleItem})
-  }catch(err){
-    return res.status(400).json({message: "アイテム読み取り失敗（シングル）"})
-  }
-})
-
-
-//ココロシフト
-//ココロシフト読み取り
-app.get("/kokoro-shift/:id", async(req, res) => {
-  try{
-    await connectDB()
-    const singleItem = await ItemModel.findById(req.params.id)
-    return res.status(200).json({message: "アイテム読み取り成功（シングル）", singleItem: singleItem})
-  }catch(err){
-    return res.status(400).json({message: "アイテム読み取り失敗（シングル）"})
-  }
-})
-
-//ココロシフト
-app.post("/shift/create/:id", auth, async(req, res) => {
+// バックエンドでStaffUserModelを使用してスタッフ名を取得するエンドポイントを追加
+app.get('/admin/staff/get-name/:staffId', async (req, res) => {
   try {
-  connectDB()
-  await ItemModel.create(req.body)
-  return res.status(200).json({message: "アイテム作成成功"})
-  }catch(err){
-    return res.status(400).json({message: "アイテム作成失敗"})
+    const staffId = req.params.staffId;
+    const staff = await StaffUserModel.findById(staffId);
+    if (staff) {
+      res.status(200).json({ name: staff.name });
+    } else {
+      res.status(404).json({ message: 'スタッフが見つかりません' });
+    }
+  } catch (error) {
+    res.status(500).json({ message: 'スタッフ名の取得に失敗しました', error: error });
   }
-})
+});
 
+// ココロシフト時給アップ登録
+app.post("/admin/shift/wage-up/register", async (req, res) => {
+  const { wageUp } = req.body;
+  console.log(wageUp)
+
+  try {
+    connectDB()
+    const newWageUp = new WageUpDataModel({ wageUp: wageUp });
+    await newWageUp.save();
+    res.json({ message: "ココロシフト時給アップが正常に登録されました" });
+  } catch (error) {
+    res.status(500).json({ error: "ココロシフト時給アップの登録中にエラーが発生しました" });
+  }
+});
+
+// ココロシフト時給アップ読み取り
+app.get('/admin/shift/wage-up/read', async (req, res) => {
+  try {
+    connectDB()
+    const wageUp = await WageUpDataModel.find();
+    res.status(200).json(wageUp);
+  } catch (error) {
+    res.status(500).json({ message: 'ココロシフト時給アップの読み込みに失敗しました' });
+  }
+});
+
+
+// ココロリスク
+// 「ココロポイント」を保存
+app.post("/staff/kokoro/state/:staffId", async (req, res) => {
+
+  const staffId = req.params.staffId;
+
+  try {
+    const newKokoroData = new KokoroDataModel({
+      kokoroState: req.body.kokoroState,
+      staffId: staffId,
+    });
+    await newKokoroData.save();
+
+    return res.status(200).json({ message: "シフトが正常に保存されました" });
+  } catch (error) {
+    return res.status(500).json({ message: "シフトの保存中にエラーが発生しました" });
+  }
+});
+
+// ココロリスク計算
+app.get('/admin/kokoro-risk/calculate/:staffIdAdmin', async (req, res) => {
+
+  const staffIdAdmin = req.params.staffIdAdmin;
+
+  try {
+    const riskData = await calculateKokoroRisk(staffIdAdmin); // calculateKokoroRisk 関数を staffIdAdmin と共に実行
+
+    if (riskData) {
+      res.json({ kokoroRisk: riskData }); // リスクデータから kokoroRisk をフロントに返す
+    } else {
+      res.status(404).json({ error: '該当のリスクデータが見つかりません' });
+    }
+  } catch (error) {
+    console.error('ココロリスクの取得に失敗しました:', error);
+    res.status(500).json({ error: 'ココロリスクの取得に失敗しました' });
+  }
+});
+
+
+// ココロシフト
+// ココロシフト申請
+app.patch('/admin/kokoro-shift/application/:eventId', async (req, res) => {
+  try {
+    connectDB();
+
+    const { eventId } = req.params;
+    const newTitle = 'ココロシフト申請中';
+
+    const updatedEvent = await ShiftModel.findByIdAndUpdate(
+      eventId,
+      { title: newTitle },
+      { new: true }
+    );
+
+    if (!updatedEvent) {
+      return res.status(404).json({ error: 'イベントが見つかりません' });
+    }
+
+    res.json(updatedEvent);
+  } catch (error) {
+    console.error('エラー:', error);
+    res.status(500).json({ error: 'イベントの更新に失敗しました' });
+  }
+});
+
+// ココロシフト承認
+app.patch('/admin/kokoro-shift/agreement/:eventId/:staffIdAdmin/:latestWageUp', async (req, res) => {
+  try {
+    connectDB();
+    const { eventId } = req.params;
+    const { staffIdAdmin } = req.params;
+    const { latestWageUp } = req.params;
+    const newTitle = 'ココロシフト';
+    const newStaffIdAdmin = staffIdAdmin;
+
+    const updatedEvent = await ShiftModel.findByIdAndUpdate(
+      eventId,
+      { title: newTitle, staffIdAdmin: newStaffIdAdmin, wageUp: latestWageUp },
+      { new: true }
+    );
+
+    if (!updatedEvent) {
+      return res.status(404).json({ error: 'イベントが見つかりません' });
+    }
+
+    res.json(updatedEvent);
+  } catch (error) {
+    console.error('エラー:', error);
+    res.status(500).json({ error: 'イベントの更新に失敗しました' });
+  }
+});
+
+// ココロシフト追加
+app.post("/admin/shift-management/:staffIdAdmin/:startTime/:endTime/:latestWageUp", async (req, res) => {
+
+  const { startTime } = req.params;
+  const { endTime } = req.params;
+  const { latestWageUp } = req.params;
+  const staffIdAdmin = req.params.staffIdAdmin;
+
+  const title = `ココロシフト`;
+
+  try {
+    connectDB()
+    const Shift = new ShiftModel({ startTime: startTime, endTime: endTime, staffIdAdmin: staffIdAdmin,
+    title: title, wageUp: latestWageUp });
+    await Shift.save();
+
+    res.status(200).json({ message: "ココロシフトが保存されました" });
+  } catch (error) {
+    console.error("Error:", error);
+    res.status(500).json({ message: "ココロシフトが保存できませんでした" });
+  }
+});
+
+// ココロシフト却下
+app.patch('/admin/kokoro-shift/dismiss/:eventId', async (req, res) => {
+  try {
+    connectDB();
+    const { eventId } = req.params;
+    const newTitle = 'シフト';
+
+    const updatedEvent = await ShiftModel.findByIdAndUpdate(
+      eventId,
+      { title: newTitle },
+      { new: true }
+    );
+
+    if (!updatedEvent) {
+      return res.status(404).json({ error: 'イベントが見つかりません' });
+    }
+
+    res.json(updatedEvent);
+  } catch (error) {
+    console.error('エラー:', error);
+    res.status(500).json({ error: 'イベントの更新に失敗しました' });
+  }
+});
 
 
 //ユーザー
-//管理者ログイン
-const secret_key = "kokoro-shift"
-
-app.post("/user/admin/login", async(req, res) => {
+//オーナー登録
+app.post("/admin/user/register", async(req, res) => {
   try{
     await connectDB()
-    const savedUserData = await UserModel.findOne({email: req.body.email})
-    if(savedUserData === 'haku@gmail.com'){
-      if(req.body.password === savedUserData.password){
+    await AdminUserModel.create(req.body)
+    return res.status(200).json({message: "ユーザー登録成功"})
+  }catch(err){
+    return res.status(400).json({message: "ユーザー登録失敗"})
+  }
+})
+
+//オーナーログイン
+const admin_secret_key = "admin-secret"
+
+app.post("/admin/user/login", async(req, res) => {
+  try{
+    await connectDB()
+    const savedAdminUserData = await AdminUserModel.findOne({email: req.body.email})
+    if(savedAdminUserData){
+      if(req.body.password === savedAdminUserData.password){
         const payload = {
           email: req.body.email,
         }
-        const token = jwt.sign(payload, secret_key, {expiresIn: "23h"})
-        return res.status(200).json({message: "ログイン成功", token})
+        const adminToken = jwt.sign(payload, admin_secret_key, { expiresIn: "23h" })
+        return res.status(200).json({message: "ログイン成功", adminToken, tokenType: "admin-token"})
       }else{
         return req.status(400).json({message: "ログイン失敗: パスワードが間違っています"})
       }
@@ -152,29 +293,35 @@ app.post("/user/admin/login", async(req, res) => {
   }
 })
 
-//従業員登録
-app.post("/user/employee/register", async(req, res) => {
+//スタッフ登録
+app.post("/admin/staff/register", async(req, res) => {
   try{
     await connectDB()
-    await UserModel.create(req.body)
+    await StaffUserModel.create(req.body)
     return res.status(200).json({message: "ユーザー登録成功"})
   }catch(err){
     return res.status(400).json({message: "ユーザー登録失敗"})
   }
 })
 
-//従業員ログイン
-app.post("/user/employee/login", async(req, res) => {
+//スタッフログイン
+const staff_secret_key = "staff-secret"
+
+app.post("/staff/user/login", async(req, res) => {
   try{
     await connectDB()
-    const savedUserData = await UserModel.findOne({email: req.body.email})
-    if(savedUserData){
-      if(req.body.password === savedUserData.password){
+    const savedStaffUserData = await StaffUserModel.findOne({email: req.body.email})
+    if(savedStaffUserData){
+      if(req.body.password === savedStaffUserData.password){
         const payload = {
           email: req.body.email,
         }
-        const token = jwt.sign(payload, secret_key, {expiresIn: "23h"})
-        return res.status(200).json({message: "ログイン成功", token})
+
+        const staffId = savedStaffUserData._id;
+        const staffName = savedStaffUserData.name;
+
+        const staffToken = jwt.sign(payload, staff_secret_key, {expiresIn: "23h"})
+        return res.status(200).json({message: "ログイン成功", staffToken, tokenType: "staff-token", staffId, staffName})
       }else{
         return req.status(400).json({message: "ログイン失敗: パスワードが間違っています"})
       }
